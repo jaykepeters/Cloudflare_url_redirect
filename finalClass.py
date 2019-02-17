@@ -1,3 +1,5 @@
+import json
+
 class redirector(object):
     def __init__(self, domain):
         self.config = {}
@@ -10,7 +12,8 @@ class redirector(object):
             "content": "alias.redirect.name"
         }
         return cname_record
-    def generateTXTrecord(sself, subdomain, url, type=None):
+
+    def generateTXTrecord(self, subdomain, url, type=None):
         types = ['permanent', 'wildcard']
         default = {
             "name": "_redirect." + subdomain,
@@ -31,7 +34,7 @@ class redirector(object):
             return default
         else:
             if type not in types:
-                exit("Invalid redirect type: " + type)
+                return default
             elif type == 'permanent':
                 return permanent
             elif type == 'wildcard':
@@ -42,16 +45,28 @@ class redirector(object):
                     wildcard['content'] = prefix + '/*'
                 return wildcard
 
-    def add(self, subdomain, url):
-        redirect = {subdomain: url}
-        self.config.update(redirect)
+    def add(self, subdomain, url, type=None):
+        config = {
+            subdomain: {
+                "destination": url,
+                "type": str(type)
+            }
+        }
+        if not type:
+            config[subdomain]['type'] = 'normal'
+            self.config = {**self.config, **config}
+        elif type not in ['normal', 'permanent', 'wildcard']:
+            exit("INVALID REDIRECT TYPE")
+        else:
+            self.config = {**self.config, **config}
 
     def create(self):
         for subdomain in self.config:
-            cname_record = self.generateCNAMErecord(subdomain)
-            txt_record = self.generateTXTrecord(subdomain, self.config[subdomain])
-            return cname_record, txt_record 
+            url = self.config[subdomain]['destination']
+            type = self.config[subdomain]['type']
+            return url, type
 
 redirect = redirector("jayke.me")
-redirect.add("git", "https://github.com/jaykepeters")
-print(redirect.create())
+redirect.add("git", "https://github.com/jaykepeters", "wildcard")
+redirect.add("github", "https://github.com/jaykepeters")
+print(json.dumps((redirect.config), indent=4))
