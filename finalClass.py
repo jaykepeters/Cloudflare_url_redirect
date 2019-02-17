@@ -1,14 +1,28 @@
+import CloudFlare
+cf = CloudFlare.CloudFlare(email='admin@domain.com', token='6***OBFUSCATED***1')
+
 from validator_collection import checkers
 import json
 
 class redirector(object):
+    def get_zone_id(self, domain):
+        zones = cf.zones.get()
+        for zone in zones:
+            zone_id = zone['id']
+            zone_name = zone['name']
+            if domain == zone_name:
+                return zone_id
+            else:
+                exit("Invalid Zone Name: " + domain)
     def __init__(self, domain):
         self.config = {}
         self.domain = domain
+        self.zone_id = self.get_zone_id(self.domain)
+
 
     def generateCNAMErecord(self, subdomain):
         cname_record = {
-            "name": subdomain,
+            "name": ".".join([subdomain, domain]),
             "type": "CNAME",
             "content": "alias.redirect.name"
         }
@@ -17,17 +31,17 @@ class redirector(object):
     def generateTXTrecord(self, subdomain, url, type=None):
         types = ['normal', 'permanent', 'wildcard']
         default = {
-            "name": "_redirect." + subdomain,
+            "name": "_redirect." + ".".join([subdomain, self.domain]),
             "type": "TXT",
             "content": "Redirects to " + url
         }
         permanent = {
-            "name": "_redirect." + subdomain,
+            "name": "_redirect." + ".".join([subdomain, self.domain]),
             "type": "TXT",
             "content": "Redirects permanently to " + url
         }
         wildcard = {
-            "name": "_redirect." + subdomain,
+            "name": "_redirect." + ".".join([subdomain, self.domain]),
             "type": "TXT",
             "content": "Redirects from /* " + url
         }
@@ -47,21 +61,35 @@ class redirector(object):
                 return wildcard
 
     def add(self, subdomain, url, type=None):
-        if not checkers.is_url(url):
-            exit("INVALID URL: " + url)
-        config = {
-            subdomain: {
-                "destination": url,
-                "type": str(type)
+        if checkers.is_url(url):
+            config = {
+                subdomain: {
+                    "destination": url,
+                    "type": str(type)
+                }
             }
-        }
-        if not type:
-            config[subdomain]['type'] = 'normal'
-            self.config = {**self.config, **config}
-        elif type not in ['normal', 'permanent', 'wildcard']:
-            exit("INVALID REDIRECT TYPE")
+            if not type:
+                config[subdomain]['type'] = 'normal'
+                self.config = {**self.config, **config}
+            elif type not in ['normal', 'permanent', 'wildcard']:
+                exit("INVALID REDIRECT TYPE")
+            else:
+                self.config = {**self.config, **config}
         else:
-            self.config = {**self.config, **config}
+            print("Invalid URL: " + url)
+
+    def check_existing(self, record):
+        dns_records = cf.zones.dns_records.get(self.zone_id)
+        for dns_record in dns_records:
+            dns_record = {
+                "name": dns_record['name'],
+                "type": dns_record['type'],
+                "content": dns_record['content']
+            }
+            matched = False
+            if record == dns_record:
+                matched = True
+        return matched
 
     def create(self):
         for subdomain in self.config:
@@ -71,7 +99,5 @@ class redirector(object):
             print(self.generateTXTrecord(subdomain, url, type))
 
 redirect = redirector("jayke.me")
-redirect.add("git", "https://github.com/jaykepeters", "wildcard")
-redirect.add("git2", "https://github.com/jp2")
-print(json.dumps((redirect.config), indent=4))
-redirect.create()
+
+#cf.zones.dns_records.delete(redirect.zone_id, '895576b5b266cbd883e89c3bce754336')
