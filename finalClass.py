@@ -1,3 +1,4 @@
+from validator_collection import checkers
 import json
 
 class redirector(object):
@@ -46,6 +47,8 @@ class redirector(object):
                 return wildcard
 
     def add(self, subdomain, url, type=None):
+        if not checkers.is_url(url):
+            exit("INVALID URL: " + url)
         config = {
             subdomain: {
                 "destination": url,
@@ -66,7 +69,6 @@ class redirector(object):
             type = self.config[subdomain]['type']
             print(self.generateCNAMErecord(subdomain))
             print(self.generateTXTrecord(subdomain, url, type))
-
 
 redirect = redirector("jayke.me")
 redirect.add("git", "https://github.com/jaykepeters", "wildcard")
