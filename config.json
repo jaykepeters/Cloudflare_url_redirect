@@ -7,6 +7,7 @@
   },
   "jpits.us": {
     "mdm": "https://mdm.manageengine.com",
-    "git": "https://github.com/jaykepeters"
+    "git": "https://github.com/jaykepeters",
+    "support": "https://support.jpits.us/open.php"
   }
 }
