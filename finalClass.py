@@ -1,5 +1,5 @@
 import CloudFlare
-cf = CloudFlare.CloudFlare(email='admin@domain.com', token='6***OBFUSCATED***1')
+cf = CloudFlare.CloudFlare(email='', token='')
 
 from validator_collection import checkers
 import json
@@ -22,7 +22,7 @@ class redirector(object):
 
     def generateCNAMErecord(self, subdomain):
         cname_record = {
-            "name": ".".join([subdomain, domain]),
+            "name": ".".join([subdomain, self.domain]),
             "type": "CNAME",
             "content": "alias.redirect.name"
         }
@@ -95,9 +95,19 @@ class redirector(object):
         for subdomain in self.config:
             url = self.config[subdomain]['destination']
             type = self.config[subdomain]['type']
-            print(self.generateCNAMErecord(subdomain))
-            print(self.generateTXTrecord(subdomain, url, type))
+
+            cname_record = self.generateCNAMErecord(subdomain)
+            txt_record = self.generateTXTrecord(subdomain, url, type)
+
+            if not self.check_existing(cname_record) and not self.check_existing(txt_record):
+                print(cname_record)
+                print(txt_record)
+            else:
+                print("Redirect already exists: " + subdomain)
 
 redirect = redirector("jayke.me")
+redirect.add("snap", "https://www.snapchat.com/add/jayke_peters")
+redirect.create()
 
+## DELTEA DNS RECORD
 #cf.zones.dns_records.delete(redirect.zone_id, '895576b5b266cbd883e89c3bce754336')
