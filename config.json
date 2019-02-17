@@ -1,10 +1,8 @@
 {
   "jayke.me": {
-    "support": "https://support.jpits.us/open.php",
-    "website": "http://www.jaykepeters.com",
-    "snap": "https://www.snapchat.com/add/jayke_peters",
-    "insta": "https://www.instagram.com/jayke_peters",
-    "tweet": "https://www.twitter.com/jayke_peters",
-    "git": "https://www.github.com/jaykepeters"
+    "snapchat": "https://www.snapchat.com/add/jayke_peters",
+    "instagram": "https://www.instagram.com/jayke_peters",
+    "twitter": "https://www.twitter.com/jayke_peters",
+    "github": "https://www.github.com/jaykepeters"
   }
 }
