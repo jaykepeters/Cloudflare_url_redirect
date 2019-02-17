@@ -14,7 +14,7 @@ class redirector(object):
         return cname_record
 
     def generateTXTrecord(self, subdomain, url, type=None):
-        types = ['permanent', 'wildcard']
+        types = ['normal', 'permanent', 'wildcard']
         default = {
             "name": "_redirect." + subdomain,
             "type": "TXT",
@@ -30,7 +30,7 @@ class redirector(object):
             "type": "TXT",
             "content": "Redirects from /* " + url
         }
-        if type is None:
+        if type is 'normal' or None:
             return default
         else:
             if type not in types:
@@ -64,9 +64,12 @@ class redirector(object):
         for subdomain in self.config:
             url = self.config[subdomain]['destination']
             type = self.config[subdomain]['type']
-            return url, type
+            print(self.generateCNAMErecord(subdomain))
+            print(self.generateTXTrecord(subdomain, url, type))
+
 
 redirect = redirector("jayke.me")
 redirect.add("git", "https://github.com/jaykepeters", "wildcard")
-redirect.add("github", "https://github.com/jaykepeters")
+redirect.add("git2", "https://github.com/jp2")
 print(json.dumps((redirect.config), indent=4))
+redirect.create()
