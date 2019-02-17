@@ -1,2 +1,2 @@
-# Cloudflare_url_redirect
-Cloudflare URL redirects with the Cloudflare API and http://redirect.name
+# Cloudflare DNS URL Redirect
+## URL Redirection using only DNS: CNAME and TXT records with http://redirect.name
