@@ -1,5 +1,5 @@
 import CloudFlare
-cf = CloudFlare.CloudFlare(email='admin@jpits.us', token='65609c9aa7e36a5f54a8d3ee0dad1a73047f1')
+cf = CloudFlare.CloudFlare(email='', token='')
 
 from validator_collection import checkers
 import json
@@ -16,13 +16,13 @@ class redirector(object):
                 exit("Invalid Zone Name: " + domain)
 
     def get_dns_records(self):
-        self.dns_records = cf.zones.dns_records.get(self.zone_id)
+        self.dns_records = cf.zones.dns_records.get(self.zone_id, params={'per_page': 100})
 
     def __init__(self, domain):
         self.config = {}
         self.domain = domain
         self.zone_id = self.get_zone_id(self.domain)
-        self.dns_records = cf.zones.dns_records.get(self.zone_id)
+        self.get_dns_records()
 
     def generateCNAMErecord(self, subdomain):
         cname_record = {
@@ -122,10 +122,28 @@ class redirector(object):
     def delete(self, subdomain):
         # Refresh DNS Records
         self.get_dns_records()
+        ids = []
+        # Correct subdomain
+        if not self.domain in subdomain:
+            subdomain = ".".join([subdomain, self.domain])
+        # Get the CNAME and TXT record IDs
+        for dns_record in self.dns_records:
+            id = dns_record['id']
+            name = dns_record['name']
+            type =  dns_record['type']
+            if name == subdomain and type == 'CNAME':
+                ids.append(id)
+            elif name == ".".join(["_redirect", subdomain]) and type == 'TXT':
+                ids.append(id)
 
+        if len(ids) == 2:
+            for id in ids:
+                try:
+                    cf.zones.dns_records.delete(self.zone_id, id)
+                except:
+                    exit("Cannot delete record!")
+            print("Successfully deleted: " + subdomain)
+        else:
+            print("Nonexistent domain: " + subdomain)
 redirect = redirector("jayke.me")
-redirect.add("facebook", "https://www.facebook.com")
-redirect.create()
-
-## DELTEA DNS RECORD
-#cf.zones.dns_records.delete(redirect.zone_id, '895576b5b266cbd883e89c3bce754336')
+redirect.delete("facebook")
