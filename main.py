@@ -115,7 +115,7 @@ class redirector(object):
                     exit("There was an error creating the txt reacord for " + txt_record['name'])
                 print("DNS redirect created successfully for " + subdomain)
             else:
-                print("record already exists")
+                print("There is already a redirect from " + subdomain + "to " + url)
 
     def delete(self, subdomain):
         # Refresh DNS Records
