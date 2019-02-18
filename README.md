@@ -3,7 +3,7 @@
 
 # Python 3 or greater and Pip are required!
 # Installation
-Enter the following commands in your preffered 
+Enter the following commands in your preffered terminal application:
 ```
 $ git clone https://github.com/jaykepeters/Cloudflare_url_redirect.git
 $ cd Cloudflare_url_redirect
