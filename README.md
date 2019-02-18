@@ -59,3 +59,9 @@ OR
 ```
 my_redirect.delete("subdomain.mydomain.com")
 ```
+
+# Upcoming Features
+- Ability to list all redirects
+- Abilty to modify redirects
+- Ability to import or save them to a file
+- Ability to customize wildcard redirects
