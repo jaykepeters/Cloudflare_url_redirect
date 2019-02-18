@@ -4,7 +4,7 @@ from validator_collection import checkers
 cf = CloudFlare.CloudFlare(email='', token='')
 class redirector(object):
     def get_zone_id(self, domain):
-        zones = cf.zones.get(params={'per_page': 100, 'name': domain})
+        zones = cf.zones.get(params={'per_page': 100, 'name': domain}) # Fixed a bug where only the first domain was returned
         for zone in zones:
             zone_id = zone['id']
             zone_name = zone['name']
