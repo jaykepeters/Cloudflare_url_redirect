@@ -61,6 +61,7 @@ my_redirect.delete("subdomain.mydomain.com")
 ```
 
 # Upcoming Features
+- PUT cf() in object, require in init process
 - [ ] Pip package
 - [ ] Installation Script
 - [ ] Store auth data in config.json
