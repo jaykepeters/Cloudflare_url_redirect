@@ -1,13 +1,18 @@
 # Cloudflare DNS URL Redirect
 ## URL Redirection using only DNS: CNAME and TXT records with http://redirect.name
 
+# Python 3 or greater and Pip are required!
 # Installation
+Enter the following commands in your preffered 
 ```
-$ git clone repo 
-$ cd repo name
-$ pip install -m requirements.txt
-$ chmod +x main.py (add bang instead of using `python name`
+$ git clone https://github.com/jaykepeters/Cloudflare_url_redirect.git
+$ cd Cloudflare_url_redirect
+$ pip install -r requirements.txt
 ```
+That's it! 
+## Run as command line tool
+1. Append the following to the top of main.py `#!/usr/bin/env python3`
+2. `$ chmod a+x main.py`
 
 # Setup
 1. Navigate to https://dash.cloudflare.com/profile and click on "Global API Key"
