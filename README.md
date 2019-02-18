@@ -61,6 +61,7 @@ my_redirect.delete("subdomain.mydomain.com")
 ```
 
 # Upcoming Features
+- [ ] Pip package
 - [ ] Installation Script
 - [ ] Store auth data in config.json
 - [ ] Ability to list all redirects
@@ -69,4 +70,5 @@ my_redirect.delete("subdomain.mydomain.com")
 - [ ] Ability to customize wildcard redirects
 
 Very Last... :(
-- COMMAND LINE TOOL, WEB GUI
+- [ ] COMMAND LINE TOOL
+- [ ] WEB GUI
